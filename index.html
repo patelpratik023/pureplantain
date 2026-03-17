@@ -104,7 +104,7 @@
 <body class="font-sans text-brand-text bg-white antialiased selection:bg-brand-gold selection:text-brand-green">
 
     <!-- Navbar -->
-    <nav class="bg-white/95 backdrop-blur-md shadow-sm fixed w-full z-50 transition-all duration-300 border-b border-gray-100" id="navbar">
+    <nav class="bg-white/95 backdrop-blur-md shadow-sm fixed top-0 left-0 w-full z-[100] transition-all duration-300 border-b border-gray-100" id="navbar">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
                 <!-- Logo -->
@@ -568,7 +568,7 @@
     </footer>
 
     <!-- Floating WhatsApp Button -->
-    <a href="https://wa.me/918080482488?text=Hello%20Pure Plantain,%20I%20am%20interested%20in%20Green%20Banana%20Flour%20Bulk%20Supply" 
+    <a href="https://wa.me/918080482488?text=Hello%20Pure%20Plantain,%20I%20am%20interested%20in%20Green%20Banana%20Flour%20Bulk%20Supply" 
        target="_blank" 
        class="fixed bottom-6 right-6 bg-brand-whatsapp text-white p-3.5 rounded-full shadow-2xl z-50 flex items-center justify-center gap-3 group whatsapp-pulse hover:bg-green-600 hover:scale-105 transition-all duration-300">
         <svg viewBox="0 0 24 24" width="32" height="32" fill="white" xmlns="http://www.w3.org/2000/svg">
@@ -589,10 +589,10 @@
         window.addEventListener('scroll', () => {
             const nav = document.getElementById('navbar');
             if (window.scrollY > 50) {
-                nav.classList.add('shadow-md', 'bg-white/95');
+                nav.classList.add('shadow-md');
                 nav.classList.remove('shadow-sm');
             } else {
-                nav.classList.remove('shadow-md', 'bg-white/95');
+                nav.classList.remove('shadow-md');
                 nav.classList.add('shadow-sm');
             }
         });
