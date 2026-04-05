@@ -533,8 +533,16 @@
                     <i data-lucide="x" class="w-6 h-6"></i>
                 </button>
             </div>
-            <div class="p-4 overflow-y-auto bg-gray-200 flex justify-center" oncontextmenu="return false;">
-                <img src="coa_certificate.jpg" alt="Pure Plantain Certified Lab Report" class="max-w-full h-auto shadow-md pointer-events-none">
+            <div class="relative p-4 overflow-auto bg-gray-200 flex justify-center h-[70vh]" oncontextmenu="return false;">
+                <div class="fixed md:absolute bottom-6 left-1/2 transform -translate-x-1/2 flex items-center gap-2 bg-white/95 backdrop-blur-sm px-4 py-2 rounded-full shadow-2xl z-50 border border-gray-200">
+                    <button onclick="zoomOut()" class="p-2 text-gray-600 hover:text-brand-green transition bg-gray-50 rounded-full hover:bg-green-50"><i data-lucide="zoom-out" class="w-5 h-5"></i></button>
+                    <button onclick="resetZoom()" class="px-3 py-2 text-gray-600 hover:text-brand-green transition font-bold text-sm">Reset</button>
+                    <button onclick="zoomIn()" class="p-2 text-gray-600 hover:text-brand-green transition bg-gray-50 rounded-full hover:bg-green-50"><i data-lucide="zoom-in" class="w-5 h-5"></i></button>
+                </div>
+                
+                <div class="w-full flex justify-center origin-top transition-transform duration-200 ease-out" id="coaImageWrapper">
+                    <img src="coa_certificate.jpg" alt="Pure Plantain Certified Lab Report" class="max-w-full h-auto shadow-md pointer-events-none object-contain">
+                </div>
             </div>
         </div>
     </div>
@@ -678,6 +686,33 @@
                 modal.classList.add('hidden');
                 modal.classList.remove('flex');
             }, 300);
+        }
+        // --- ZOOM CONTROL ENGINE ---
+        let currentZoom = 1;
+        const zoomStep = 0.25; // How much it zooms per click
+        const maxZoom = 3;     // Maximum 300% zoom
+        const minZoom = 0.5;   // Minimum 50% zoom
+
+        function zoomIn() {
+            const wrapper = document.getElementById('coaImageWrapper');
+            if (currentZoom < maxZoom) {
+                currentZoom += zoomStep;
+                wrapper.style.transform = `scale(${currentZoom})`;
+            }
+        }
+
+        function zoomOut() {
+            const wrapper = document.getElementById('coaImageWrapper');
+            if (currentZoom > minZoom) {
+                currentZoom -= zoomStep;
+                wrapper.style.transform = `scale(${currentZoom})`;
+            }
+        }
+
+        function resetZoom() {
+            const wrapper = document.getElementById('coaImageWrapper');
+            currentZoom = 1;
+            wrapper.style.transform = `scale(${currentZoom})`;
         }
     </script>
 </body>
