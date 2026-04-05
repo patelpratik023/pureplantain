@@ -540,8 +540,8 @@
                     <button onclick="zoomIn()" class="p-2 text-gray-600 hover:text-brand-green transition bg-gray-50 rounded-full hover:bg-green-50"><i data-lucide="zoom-in" class="w-5 h-5"></i></button>
                 </div>
                 
-                <div class="w-full flex justify-center origin-top transition-transform duration-200 ease-out" id="coaImageWrapper">
-                    <img src="coa_certificate.jpg" alt="Pure Plantain Certified Lab Report" class="max-w-full h-auto shadow-md pointer-events-none object-contain">
+                <div class="w-full flex justify-center origin-center cursor-grab" id="coaImageWrapper">
+                    <img src="coa_certificate.jpg" alt="Pure Plantain Certified Lab Report" class="max-w-full h-auto shadow-md object-contain select-none">
                 </div>
             </div>
         </div>
@@ -688,33 +688,89 @@
                 resetZoom(); // Resets the image size for next time
             }, 300);
         }
-        // --- ZOOM CONTROL ENGINE ---
+     // --- ZOOM & PAN CONTROL ENGINE ---
+        const wrapper = document.getElementById('coaImageWrapper');
         let currentZoom = 1;
-        const zoomStep = 0.25; // How much it zooms per click
-        const maxZoom = 3;     // Maximum 300% zoom
-        const minZoom = 0.5;   // Minimum 50% zoom
+        const zoomStep = 0.25;
+        const maxZoom = 3;
+        const minZoom = 0.5;
+
+        // Pan Variables
+        let isDragging = false;
+        let startX, startY;
+        let translateX = 0, translateY = 0;
+
+        function updateTransform() {
+            // Applies both the pan position and the zoom level simultaneously 
+            wrapper.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentZoom})`;
+        }
 
         function zoomIn() {
-            const wrapper = document.getElementById('coaImageWrapper');
             if (currentZoom < maxZoom) {
                 currentZoom += zoomStep;
-                wrapper.style.transform = `scale(${currentZoom})`;
+                updateTransform();
             }
         }
 
         function zoomOut() {
-            const wrapper = document.getElementById('coaImageWrapper');
             if (currentZoom > minZoom) {
                 currentZoom -= zoomStep;
-                wrapper.style.transform = `scale(${currentZoom})`;
+                updateTransform();
             }
         }
 
         function resetZoom() {
-            const wrapper = document.getElementById('coaImageWrapper');
             currentZoom = 1;
-            wrapper.style.transform = `scale(${currentZoom})`;
+            translateX = 0; // Reset X position
+            translateY = 0; // Reset Y position
+            updateTransform();
         }
+
+        // --- MOUSE DRAGGING LOGIC (Desktop: Left or Right Click) ---
+        wrapper.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            isDragging = true;
+            startX = e.clientX - translateX;
+            startY = e.clientY - translateY;
+            wrapper.classList.remove('cursor-grab');
+            wrapper.classList.add('cursor-grabbing');
+        });
+
+        wrapper.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            translateX = e.clientX - startX;
+            translateY = e.clientY - startY;
+            updateTransform();
+        });
+
+        window.addEventListener('mouseup', () => {
+            isDragging = false;
+            wrapper.classList.add('cursor-grab');
+            wrapper.classList.remove('cursor-grabbing');
+        });
+
+        // --- TOUCH DRAGGING LOGIC (Mobile & Tablets) ---
+        wrapper.addEventListener('touchstart', (e) => {
+            isDragging = true;
+            startX = e.touches[0].clientX - translateX;
+            startY = e.touches[0].clientY - translateY;
+        });
+
+        wrapper.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            // Prevent the whole webpage from scrolling while panning the image
+            if (currentZoom > 1) {
+                e.preventDefault(); 
+            }
+            translateX = e.touches[0].clientX - startX;
+            translateY = e.touches[0].clientY - startY;
+            updateTransform();
+        }, { passive: false });
+
+        wrapper.addEventListener('touchend', () => {
+            isDragging = false;
+        });
     </script>
 </body>
 </html>
