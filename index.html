@@ -700,8 +700,25 @@
         let startX, startY;
         let translateX = 0, translateY = 0;
 
+        // NEW: Calculates the invisible walls based on zoom level
+        function getBounds(proposedX, proposedY) {
+            const img = wrapper.querySelector('img');
+            const container = wrapper.parentElement;
+            
+            const maxX = Math.max(0, (img.clientWidth * currentZoom - container.clientWidth) / 2);
+            const maxY = Math.max(0, (img.clientHeight * currentZoom - container.clientHeight) / 2);
+
+            return {
+                x: Math.max(-maxX, Math.min(proposedX, maxX)),
+                y: Math.max(-maxY, Math.min(proposedY, maxY))
+            };
+        }
+
         function updateTransform() {
-            // Applies both the pan position and the zoom level simultaneously 
+            // Re-clamps the image instantly if a user zooms out while panned to the edge
+            const bounds = getBounds(translateX, translateY);
+            translateX = bounds.x;
+            translateY = bounds.y;
             wrapper.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentZoom})`;
         }
 
@@ -721,12 +738,12 @@
 
         function resetZoom() {
             currentZoom = 1;
-            translateX = 0; // Reset X position
-            translateY = 0; // Reset Y position
+            translateX = 0;
+            translateY = 0;
             updateTransform();
         }
 
-        // --- MOUSE DRAGGING LOGIC (Desktop: Left or Right Click) ---
+        // --- MOUSE DRAGGING (Desktop) ---
         wrapper.addEventListener('mousedown', (e) => {
             e.preventDefault();
             isDragging = true;
@@ -739,8 +756,19 @@
         wrapper.addEventListener('mousemove', (e) => {
             if (!isDragging) return;
             e.preventDefault();
-            translateX = e.clientX - startX;
-            translateY = e.clientY - startY;
+            
+            const proposedX = e.clientX - startX;
+            const proposedY = e.clientY - startY;
+            
+            // Check proposed move against the invisible walls
+            const bounds = getBounds(proposedX, proposedY);
+            translateX = bounds.x;
+            translateY = bounds.y;
+            
+            // Prevent the mouse from slipping out of sync when hitting an edge
+            startX = e.clientX - translateX;
+            startY = e.clientY - translateY;
+            
             updateTransform();
         });
 
@@ -750,7 +778,7 @@
             wrapper.classList.remove('cursor-grabbing');
         });
 
-        // --- TOUCH DRAGGING LOGIC (Mobile & Tablets) ---
+        // --- TOUCH DRAGGING (Mobile) ---
         wrapper.addEventListener('touchstart', (e) => {
             isDragging = true;
             startX = e.touches[0].clientX - translateX;
@@ -759,12 +787,22 @@
 
         wrapper.addEventListener('touchmove', (e) => {
             if (!isDragging) return;
-            // Prevent the whole webpage from scrolling while panning the image
             if (currentZoom > 1) {
                 e.preventDefault(); 
             }
-            translateX = e.touches[0].clientX - startX;
-            translateY = e.touches[0].clientY - startY;
+            
+            const proposedX = e.touches[0].clientX - startX;
+            const proposedY = e.touches[0].clientY - startY;
+            
+            // Check proposed move against the invisible walls
+            const bounds = getBounds(proposedX, proposedY);
+            translateX = bounds.x;
+            translateY = bounds.y;
+            
+            // Prevent the finger from slipping out of sync when hitting an edge
+            startX = e.touches[0].clientX - translateX;
+            startY = e.touches[0].clientY - translateY;
+            
             updateTransform();
         }, { passive: false });
 
