@@ -526,7 +526,20 @@
             </div>
         </div>
     </section>
-
+<div id="coaModal" class="fixed inset-0 z-[200] hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4 opacity-0 transition-opacity duration-300">
+        <div class="relative max-w-4xl w-full bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="flex justify-between items-center p-4 border-b border-gray-100 bg-gray-50">
+                <h3 class="font-bold text-brand-green font-serif text-xl">Official Certificate of Analysis</h3>
+                <button onclick="closeModal()" class="text-gray-500 hover:text-red-500 transition">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <div class="p-4 overflow-y-auto bg-gray-200 flex justify-center" oncontextmenu="return false;">
+                <img src="coa_certificate.jpg" alt="Pure Plantain Certified Lab Report" class="max-w-full h-auto shadow-md pointer-events-none">
+            </div>
+        </div>
+    </div>
+    
     <!-- Professional Footer -->
     <footer class="bg-brand-green text-white py-16 border-t border-green-800">
         <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-12 text-sm opacity-90">
@@ -649,6 +662,24 @@
                 submitBtn.classList.remove('opacity-70', 'cursor-wait');
             }
         });
+        // Modal Control Functions
+        function openModal() {
+            const modal = document.getElementById('coaModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            // Small delay to allow CSS transition to work
+            setTimeout(() => modal.classList.remove('opacity-0'), 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('coaModal');
+            modal.classList.add('opacity-0');
+            // Wait for fade out to finish before hiding completely
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
+        }
     </script>
 </body>
 </html>
